@@ -1,0 +1,37 @@
+# FleetSense - Tier 1 core dependencies (GPS + schedule only).
+# Verified installable with Python 3.12.16 on 2026-11-09 in this repo's .venv.
+# Install with:  uv pip install -r requirements.txt
+#   (or)         python -m pip install -r requirements.txt
+# Versions are pinned to what was actually tested, so the pipeline is reproducible.
+
+# --- data handling -----------------------------------------------------------
+pandas==3.1.1
+numpy==2.5.4
+pyarrow==26.0.1
+
+# --- geospatial --------------------------------------------------------------
+geopandas==1.2.0
+shapely==2.2.0
+pyproj==3.8.0
+h3==4.5.0            # hexagon grid for the secondary spatial unit (resolution 8)
+osmnx==2.1.1         # OSM POIs / road network, used to *explain* clusters in Stage 7
+
+# --- transit data ------------------------------------------------------------
+partridge==1.1.2     # GTFS loader used when the full official feed (with times) is present
+
+# --- clustering / reduction --------------------------------------------------
+scikit-learn==1.9.1
+scipy==1.18.1
+hdbscan==0.8.44      # denser metrics than sklearn's HDBSCAN; DBCV scoring
+umap-learn==0.5.12   # visualisation ONLY - never cluster on UMAP output
+tslearn==0.10.0      # time-series K-Means / DTW for daily activity profiles
+
+# --- visualisation -----------------------------------------------------------
+matplotlib==3.11.2
+seaborn==0.13.2
+plotly==7.1.0
+folium==0.20.0
+
+# --- notebooks ---------------------------------------------------------------
+jupyterlab==4.6.6
+nbconvert==7.17.2

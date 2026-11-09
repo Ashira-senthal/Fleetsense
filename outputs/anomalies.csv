@@ -1,0 +1,18 @@
+h3_cell,cluster,anomaly_type,distance_to_centroid,profile_distance,drivers,anomaly_z_spatial,anomaly_z_temporal,lat_centroid,lon_centroid
+8839220087fffff,2,behaviour,6.6408,0.54569,speed_cv +5.0sd; slow_share +3.0sd; speed_mean -2.2sd,6.01,1.769,41.246156426386236,-8.607677248565967
+8839220de1fffff,3,both,6.4014,0.58574,pm_peak_share +4.4sd; weekend_share -1.9sd; speed_cv +1.3sd,5.688,2.002,41.08096227272727,-8.53821
+8839220011fffff,2,both,6.2085,0.65767,am_peak_share +3.5sd; slow_share +1.5sd; night_share -1.3sd,5.429,2.419,41.2677378,-8.666330772413794
+8839220521fffff,2,behaviour,5.8428,0.38177,pm_peak_share +3.7sd; slow_share +1.9sd; speed_cv +1.6sd,4.937,0.817,41.22703228078817,-8.540662943349755
+8839220523fffff,2,behaviour,5.4923,0.47419,pm_peak_share +3.3sd; slow_share +1.7sd; speed_cv +1.5sd,4.466,1.354,41.22484777540107,-8.529941213903744
+8839223b6bfffff,2,behaviour,5.2392,0.49701,weekend_share +3.9sd; speed_cv +2.3sd; slow_share +2.2sd,4.125,1.486,41.18500774137931,-8.447955103448276
+8839220539fffff,3,behaviour,5.2167,0.37817,pm_peak_share +3.3sd; weekend_share -1.9sd; speed_mean +1.6sd,4.095,0.796,41.237667,-8.5134165
+88392272cbfffff,2,both,5.1573,0.72693,speed_cv +3.5sd; slow_share +2.5sd; speed_mean -1.8sd,4.015,2.822,41.06478897718631,-8.570997479087453
+8839220d61fffff,2,behaviour,5.0972,0.47939,am_peak_share +2.9sd; night_share +1.5sd; speed_mean +1.1sd,3.934,1.384,41.0867041875,-8.618974125
+883922053bfffff,3,behaviour,5.0018,0.33911,pm_peak_share +2.9sd; weekend_share -1.9sd; speed_mean +1.4sd,3.806,0.569,41.241408923076925,-8.508554307692307
+88392200abfffff,2,behaviour,4.9783,0.24434,am_peak_share +2.8sd; slow_share +1.1sd; speed_mean -1.0sd,3.774,0.019,41.23770811096606,-8.613032945169714
+8839220545fffff,2,behaviour,4.8896,0.46916,am_peak_share +2.9sd; speed_mean +1.9sd; weekend_share -0.9sd,3.655,1.325,41.25770588571429,-8.562612857142856
+8839220517fffff,3,behaviour,4.8663,0.36363,pm_peak_share +3.3sd; weekend_share -1.3sd; speed_cv -1.2sd,3.624,0.712,41.242523999999996,-8.5013625
+883922701dfffff,2,rhythm,4.8293,0.86947,speed_cv +4.2sd; slow_share +2.8sd; speed_mean -1.4sd,3.574,3.65,40.990066255102036,-8.58222918367347
+8839220e85fffff,2,rhythm,4.4656,0.61849,pm_peak_share +2.6sd; weekend_share -1.3sd; am_peak_share -1.0sd,3.085,2.192,41.186397,-8.5063485
+8839227057fffff,0,rhythm,4.16,0.65999,slow_share +2.4sd; speed_cv +2.1sd; night_share -2.1sd,2.674,2.433,41.001385235294116,-8.583203647058824
+8839220053fffff,0,rhythm,2.5099,0.61613,pm_peak_share -1.2sd; n_visits -0.8sd; am_peak_share -0.7sd,0.454,2.178,41.280797142857146,-8.674723285714284

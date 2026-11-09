@@ -1,0 +1,16 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+
+# --- Data: raw inputs are never committed (size + licence) ---
+data/raw/*
+!data/raw/SOURCES.md
+data/interim/*
+data/processed/*
+
+# --- Large derived artefacts ---
+# Figures ARE committed: they are part of the deliverable and outputs/SCHEMA.md declares
+# them, so a clone without them would fail `python -m src.schema`. Total ~1.6 MB.
+outputs/figures/*.html

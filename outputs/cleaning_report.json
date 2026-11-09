@@ -1,0 +1,72 @@
+{
+  "stage": 2,
+  "data_source": "synthetic_test_fixture",
+  "synthetic": true,
+  "seed": 42,
+  "feed_dir": "/home/ashira/Documents/Projects/Fleetsense/data/raw/delhi_gtfs_trimmed",
+  "report": {
+    "thresholds": {
+      "max_speed_kmh": 100.0,
+      "bbox": {
+        "lat_min": 28.366651,
+        "lat_max": 28.921866,
+        "lon_min": 76.7927716601981,
+        "lon_max": 77.464551,
+        "margin_deg": 0.05,
+        "source": "observed stop extent + margin"
+      },
+      "max_jump_passes": 5
+    },
+    "rows_in": 431820,
+    "dropped_missing": 0,
+    "dropped_exact_duplicate_pings": 2123,
+    "dropped_conflicting_timestamps": 36,
+    "dropped_duplicates_total": 2159,
+    "dropped_outside_bbox": 859,
+    "dropped_nonpositive_timestep": 0,
+    "dropped_impossible_jumps": 1957,
+    "jump_passes_used": 1,
+    "residual_implausible_steps": 69,
+    "residual_implausible_vehicles": 69,
+    "rows_out": 426845,
+    "pct_removed": 1.152,
+    "speed_kmh_before": {
+      "p50": 16.25,
+      "p95": 19.89,
+      "p99": 261.59,
+      "max": 9299.37
+    },
+    "speed_kmh_after": {
+      "p50": 16.21,
+      "p95": 19.59,
+      "p99": 21.42,
+      "max": 534.09
+    }
+  },
+  "known_defect_scoring": {
+    "defect_jump": {
+      "injected": 2156,
+      "survived_cleaning": 210,
+      "recall": 0.9026
+    },
+    "defect_duplicate": {
+      "injected": 2148,
+      "duplicate_keys_remaining_in_clean": 0,
+      "recall": 1.0
+    },
+    "defect_outside": {
+      "injected": 863,
+      "survived_cleaning": 0,
+      "recall": 1.0
+    },
+    "defect_time": {
+      "injected": 1295,
+      "nonpositive_steps_after_clean": 0,
+      "note": "repaired by sorting; rows intentionally kept"
+    }
+  },
+  "outputs": {
+    "raw": "/home/ashira/Documents/Projects/Fleetsense/data/interim/points_synthetic_raw.parquet",
+    "cleaned": "/home/ashira/Documents/Projects/Fleetsense/data/processed/points_synthetic_cleaned.parquet"
+  }
+}

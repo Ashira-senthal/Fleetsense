@@ -1,0 +1,18 @@
+# FleetSense - OPTIONAL dependencies. Nothing in Tier 1 imports these.
+#
+# Tier 2 (bonus): video footfall counting with a pretrained person detector.
+#   Counts only. No identification, no face recognition, aggregate outputs only.
+# ultralytics        # YOLO person detection
+# opencv-python      # video frame reading
+# supervision        # line/zone counting helpers
+#
+# Experiment tracking (optional):
+# mlflow
+#
+# Streamlit dashboard (Stage 9 - separate build, reads outputs/ only):
+# streamlit
+# streamlit-folium
+#
+# These are intentionally NOT pinned yet: they are not installed or tested, so
+# pinning them would be a claim we have not verified. Pin them on the day you
+# install them.

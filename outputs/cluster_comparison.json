@@ -1,0 +1,154 @@
+{
+  "stage": 6,
+  "data_source": "porto_taxi_uci339",
+  "synthetic": false,
+  "limitation": "taxis, not buses",
+  "rows": [
+    {
+      "algorithm": "kmeans",
+      "space": "PC1-PC5 (euclidean)",
+      "n_clusters": 4,
+      "coverage": 1.0,
+      "noise_share": 0.0,
+      "silhouette": 0.2443,
+      "silhouette_pca_space": 0.2443,
+      "davies_bouldin": 1.4354,
+      "calinski_harabasz": 182.1893,
+      "dbcv": -0.5963,
+      "ari_mean": 0.8507,
+      "ari_sd": 0.0518,
+      "ari_min": 0.7582,
+      "ari_boot_n": 10.0
+    },
+    {
+      "algorithm": "ward",
+      "space": "PC1-PC5 (euclidean)",
+      "n_clusters": 4,
+      "coverage": 1.0,
+      "noise_share": 0.0,
+      "silhouette": 0.2157,
+      "silhouette_pca_space": 0.2157,
+      "davies_bouldin": 1.7856,
+      "calinski_harabasz": 144.0456,
+      "dbcv": -0.4758,
+      "ari_mean": 0.4742,
+      "ari_sd": 0.1617,
+      "ari_min": 0.2864,
+      "ari_boot_n": 10.0
+    },
+    {
+      "algorithm": "gmm",
+      "space": "PC1-PC5 (euclidean)",
+      "n_clusters": 4,
+      "coverage": 1.0,
+      "noise_share": 0.0,
+      "silhouette": 0.1508,
+      "silhouette_pca_space": 0.1508,
+      "davies_bouldin": 2.0495,
+      "calinski_harabasz": 106.5923,
+      "dbcv": -0.5037,
+      "ari_mean": 0.5722,
+      "ari_sd": 0.1655,
+      "ari_min": 0.308,
+      "ari_boot_n": 10.0
+    },
+    {
+      "algorithm": "dbscan_spatial",
+      "space": "lat/lon (haversine km)",
+      "n_clusters": 41,
+      "coverage": 0.6246,
+      "noise_share": 0.3754,
+      "silhouette": 0.2174,
+      "silhouette_pca_space": -0.2516,
+      "davies_bouldin": NaN,
+      "calinski_harabasz": NaN,
+      "dbcv": 0.1826,
+      "ari_mean": 0.414,
+      "ari_sd": 0.1055,
+      "ari_min": 0.2566,
+      "ari_boot_n": 10.0
+    },
+    {
+      "algorithm": "hdbscan",
+      "space": "PC1-PC5 (euclidean)",
+      "n_clusters": 3,
+      "coverage": 0.397,
+      "noise_share": 0.603,
+      "silhouette": 0.3327,
+      "silhouette_pca_space": 0.3327,
+      "davies_bouldin": 0.9117,
+      "calinski_harabasz": 52.6066,
+      "dbcv": -0.2028,
+      "ari_mean": 0.6945,
+      "ari_sd": 0.0733,
+      "ari_min": 0.5281,
+      "ari_boot_n": 10.0
+    },
+    {
+      "algorithm": "tskmeans",
+      "space": "DTW on 168-h profiles (subsample)",
+      "n_clusters": 4,
+      "coverage": 1.0,
+      "noise_share": 0.0,
+      "silhouette": 0.2585,
+      "silhouette_pca_space": 0.0582,
+      "davies_bouldin": NaN,
+      "calinski_harabasz": NaN,
+      "dbcv": NaN,
+      "ari_mean": 0.4302,
+      "ari_sd": 0.1253,
+      "ari_min": 0.2998,
+      "ari_boot_n": 5.0
+    }
+  ],
+  "stability_settings": {
+    "kmeans": {
+      "n_boot": 10,
+      "ari_mean": 0.8507,
+      "ari_sd": 0.0518,
+      "ari_min": 0.7582,
+      "frac": 0.8
+    },
+    "ward": {
+      "n_boot": 10,
+      "ari_mean": 0.4742,
+      "ari_sd": 0.1617,
+      "ari_min": 0.2864,
+      "frac": 0.8
+    },
+    "gmm": {
+      "n_boot": 10,
+      "ari_mean": 0.5722,
+      "ari_sd": 0.1655,
+      "ari_min": 0.308,
+      "frac": 0.8
+    },
+    "dbscan_spatial": {
+      "n_boot": 10,
+      "ari_mean": 0.414,
+      "ari_sd": 0.1055,
+      "ari_min": 0.2566,
+      "frac": 0.8
+    },
+    "hdbscan": {
+      "n_boot": 10,
+      "ari_mean": 0.6945,
+      "ari_sd": 0.0733,
+      "ari_min": 0.5281,
+      "frac": 0.8
+    },
+    "tskmeans": {
+      "n_boot": 5,
+      "ari_mean": 0.4302,
+      "ari_sd": 0.1253,
+      "ari_min": 0.2998,
+      "frac": 0.6
+    }
+  },
+  "notes": {
+    "noise": "cells labelled -1 are excluded from all metrics and reported as noise_share",
+    "spaces": "silhouette is computed in the algorithm's own space; silhouette_pca_space repeats it in PC1-PC5 for cross-space comparison",
+    "db_ch": "undefined without a feature space, left empty rather than approximated",
+    "dbcv_dtw": "not defined for a DTW metric space; reported as null"
+  }
+}

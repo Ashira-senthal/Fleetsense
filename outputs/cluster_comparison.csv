@@ -1,0 +1,7 @@
+algorithm,space,n_clusters,coverage,noise_share,silhouette,silhouette_pca_space,davies_bouldin,calinski_harabasz,dbcv,ari_mean,ari_sd,ari_min,ari_boot_n
+kmeans,PC1-PC5 (euclidean),4,1.0,0.0,0.2443,0.2443,1.4354,182.1893,-0.5963,0.8507,0.0518,0.7582,10.0
+ward,PC1-PC5 (euclidean),4,1.0,0.0,0.2157,0.2157,1.7856,144.0456,-0.4758,0.4742,0.1617,0.2864,10.0
+gmm,PC1-PC5 (euclidean),4,1.0,0.0,0.1508,0.1508,2.0495,106.5923,-0.5037,0.5722,0.1655,0.308,10.0
+dbscan_spatial,lat/lon (haversine km),41,0.6246,0.3754,0.2174,-0.2516,,,0.1826,0.414,0.1055,0.2566,10.0
+hdbscan,PC1-PC5 (euclidean),3,0.397,0.603,0.3327,0.3327,0.9117,52.6066,-0.2028,0.6945,0.0733,0.5281,10.0
+tskmeans,DTW on 168-h profiles (subsample),4,1.0,0.0,0.2585,0.0582,,,,0.4302,0.1253,0.2998,5.0

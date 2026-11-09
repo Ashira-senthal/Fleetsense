@@ -1,0 +1,247 @@
+{
+  "stage": 1,
+  "label": "Delhi OTD (trimmed public copy)",
+  "feed_path": "data/raw/delhi_gtfs_trimmed",
+  "audited_at_utc": "2026-11-09T06:30:09+00:00",
+  "synthetic": false,
+  "tables": {
+    "agency": {
+      "rows": 2,
+      "columns": [
+        "agency_id",
+        "agency_name",
+        "agency_url",
+        "agency_timezone",
+        "agency_lang",
+        "agency_phone",
+        "agency_fare_url"
+      ],
+      "n_columns": 7,
+      "duplicate_rows": 0,
+      "missing_per_column": {
+        "agency_id": 0,
+        "agency_name": 0,
+        "agency_url": 0,
+        "agency_timezone": 0,
+        "agency_lang": 0,
+        "agency_phone": 2,
+        "agency_fare_url": 2
+      },
+      "nunique_per_column": {
+        "agency_id": 2,
+        "agency_name": 2,
+        "agency_url": 2,
+        "agency_timezone": 1,
+        "agency_lang": 1,
+        "agency_phone": 0,
+        "agency_fare_url": 0
+      }
+    },
+    "calendar": {
+      "rows": 1,
+      "columns": [
+        "start_date",
+        "end_date",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+        "service_id"
+      ],
+      "n_columns": 10,
+      "duplicate_rows": 0,
+      "missing_per_column": {
+        "start_date": 0,
+        "end_date": 0,
+        "monday": 0,
+        "tuesday": 0,
+        "wednesday": 0,
+        "thursday": 0,
+        "friday": 0,
+        "saturday": 0,
+        "sunday": 0,
+        "service_id": 0
+      },
+      "nunique_per_column": {
+        "start_date": 1,
+        "end_date": 1,
+        "monday": 1,
+        "tuesday": 1,
+        "wednesday": 1,
+        "thursday": 1,
+        "friday": 1,
+        "saturday": 1,
+        "sunday": 1,
+        "service_id": 1
+      }
+    },
+    "routes": {
+      "rows": 2403,
+      "columns": [
+        "route_id",
+        "agency_id",
+        "route_short_name",
+        "route_long_name",
+        "route_type",
+        "route_color"
+      ],
+      "n_columns": 6,
+      "duplicate_rows": 0,
+      "missing_per_column": {
+        "route_id": 0,
+        "agency_id": 0,
+        "route_short_name": 0,
+        "route_long_name": 0,
+        "route_type": 0,
+        "route_color": 0
+      },
+      "nunique_per_column": {
+        "route_id": 2403,
+        "agency_id": 2,
+        "route_short_name": 1982,
+        "route_long_name": 1982,
+        "route_type": 1,
+        "route_color": 2403
+      }
+    },
+    "trips": {
+      "rows": 2403,
+      "columns": [
+        "route_id",
+        "service_id",
+        "trip_id",
+        "shape_id"
+      ],
+      "n_columns": 4,
+      "duplicate_rows": 0,
+      "missing_per_column": {
+        "route_id": 0,
+        "service_id": 0,
+        "trip_id": 0,
+        "shape_id": 2403
+      },
+      "nunique_per_column": {
+        "route_id": 2403,
+        "service_id": 1,
+        "trip_id": 2403,
+        "shape_id": 0
+      }
+    },
+    "stops": {
+      "rows": 10559,
+      "columns": [
+        "stop_id",
+        "stop_name",
+        "stop_lat",
+        "stop_lon"
+      ],
+      "n_columns": 4,
+      "duplicate_rows": 0,
+      "missing_per_column": {
+        "stop_id": 0,
+        "stop_name": 0,
+        "stop_lat": 0,
+        "stop_lon": 0
+      },
+      "nunique_per_column": {
+        "stop_id": 10559,
+        "stop_name": 3963,
+        "stop_lat": 6549,
+        "stop_lon": 6609
+      }
+    },
+    "stop_times": {
+      "rows": 99286,
+      "columns": [
+        "trip_id",
+        "stop_id",
+        "stop_sequence"
+      ],
+      "n_columns": 3,
+      "duplicate_rows": 0,
+      "missing_per_column": {
+        "trip_id": 0,
+        "stop_id": 0,
+        "stop_sequence": 0
+      },
+      "nunique_per_column": {
+        "trip_id": 2403,
+        "stop_id": 10559,
+        "stop_sequence": 197
+      }
+    }
+  },
+  "stops": {
+    "n_stops": 10559,
+    "n_duplicate_stop_ids": 0,
+    "n_missing_coords": 0,
+    "lat_min": 28.416651,
+    "lat_max": 28.871866,
+    "lon_min": 76.8427716601981,
+    "lon_max": 77.414551,
+    "n_duplicate_coordinate_pairs": 3679,
+    "n_outside_envelope": 0,
+    "pct_outside_envelope": 0.0,
+    "envelope": {
+      "lat_min": 28.3,
+      "lat_max": 28.95,
+      "lon_min": 76.75,
+      "lon_max": 77.5,
+      "is_approximate": true,
+      "note": "Generous envelope around Delhi NCT; not an administrative boundary."
+    }
+  },
+  "integrity": {
+    "stop_ids_in_stop_times_missing_from_stops": 0,
+    "stop_ids_in_stops_never_used": 0,
+    "trip_ids_in_stop_times_missing_from_trips": 0,
+    "route_ids_in_trips_missing_from_routes": 0,
+    "duplicate_trip_stop_sequence_keys": 0,
+    "trips_with_nonmonotonic_stop_sequence": 0,
+    "n_stop_sequence_missing": 0,
+    "has_arrival_departure_times": false,
+    "trips_per_route": {
+      "min": 1,
+      "median": 1.0,
+      "max": 1,
+      "routes_with_one_trip": 2403,
+      "n_routes": 2403
+    },
+    "stops_per_trip": {
+      "min": 2,
+      "median": 42.0,
+      "max": 197
+    }
+  },
+  "calendar": {
+    "agencies": 2,
+    "agency_timezones": [
+      "Asia/Kolkata"
+    ],
+    "agency_names": [
+      "Delhi Integrated Multi-Modal Transit System Ltd.",
+      "Delhi Transport Corporation"
+    ],
+    "n_services": 1,
+    "start_date_min": "20240101",
+    "end_date_max": "20250101",
+    "service_days_any": {
+      "monday": 1,
+      "tuesday": 1,
+      "wednesday": 1,
+      "thursday": 1,
+      "friday": 1,
+      "saturday": 1,
+      "sunday": 1
+    },
+    "services_running_seven_days": 1
+  },
+  "findings": [
+    "stop_times has NO arrival_time/departure_time columns: this feed cannot give schedule delay, dwell time or headway. Get the full official zip.",
+    "2403 of 2403 routes have exactly one trip, so this is a trimmed sample, not a working timetable. Recurring temporal patterns cannot be learned from it.",
+    "3679 stops share an identical coordinate pair - likely platforms of one physical stop. Decide in Stage 3 whether to merge them into one node."
+  ]
+}

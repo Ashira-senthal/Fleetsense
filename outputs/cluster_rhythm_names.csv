@@ -1,0 +1,5 @@
+rhythm_cluster,rhythm_name,peak_hour,n_peaks,weekend_share,activity_level,mean_total_activity
+0,"all-week, morning twin-peak (09:00 peak, high-volume)",9,2,0.261,high-volume,6040.1
+1,"weekend-weighted, midday twin-peak (14:00 peak, mid-volume)",14,2,0.344,mid-volume,57.8
+2,"all-week, morning single-peak (09:00 peak, mid-volume)",9,1,0.228,mid-volume,61.6
+3,"weekday-only, morning twin-peak (09:00 peak, mid-volume)",9,2,0.091,mid-volume,104.8
