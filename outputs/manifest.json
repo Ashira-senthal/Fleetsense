@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2026-11-09T08:31:00+00:00",
+  "generated_utc": "2026-11-12T07:54:31+00:00",
   "stage": 8,
   "provenance": {
-    "data_source": "porto_taxi_uci339",
+    "data_source": "delhi_gtfs_kaggle",
     "synthetic": false,
-    "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+    "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
   },
   "read_contract": "The dashboard reads only this directory. Files are outputs of the notebooks in ./notebooks and must not be edited by hand.",
   "files": {
@@ -12,12 +12,12 @@
       "format": "csv",
       "description": "One row per cluster: size, location, mean of every behaviour feature, generated name and a one-sentence description.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 1815,
+      "bytes": 1783,
       "rows": 4,
       "cols": 26,
       "columns": {
@@ -157,12 +157,12 @@
       "format": "csv",
       "description": "OpenStreetMap POI counts per cluster, absolute and per cell. Per-cell density is the comparable number (cluster area differs).",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 815,
+      "bytes": 814,
       "rows": 4,
       "cols": 21,
       "columns": {
@@ -220,12 +220,12 @@
       "format": "parquet",
       "description": "Cluster x hour-of-week activity matrix: what the dashboard's weekly chart needs, one row per cluster, no aggregation left to do in the app.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 93102,
+      "bytes": 93036,
       "rows": 4,
       "cols": 168,
       "columns": {},
@@ -240,12 +240,12 @@
       "format": "csv",
       "description": "Name and measured properties of each TS-K-Means weekly-rhythm cluster.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 445,
+      "bytes": 440,
       "rows": 4,
       "cols": 7,
       "columns": {
@@ -290,12 +290,12 @@
       "format": "csv",
       "description": "Cell counts crossing the behaviour clusters with the rhythm clusters. A row spread across several rhythm columns is a behaviour that happens at different times of week in different places.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 76,
+      "bytes": 78,
       "rows": 4,
       "cols": 5,
       "columns": {
@@ -317,13 +317,13 @@
       "format": "parquet",
       "description": "The join table every map needs: one row per analysed H3 cell with its behaviour cluster, rhythm cluster, anomaly scores and flags.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 66800,
-      "rows": 602,
+      "bytes": 106905,
+      "rows": 1155,
       "cols": 17,
       "columns": {
         "h3_cell": {
@@ -417,13 +417,13 @@
       "format": "csv",
       "description": "Only the flagged cells (behaviour / rhythm / both), with coordinates and drivers. A subset of cell_annotations.parquet.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 2607,
-      "rows": 17,
+      "bytes": 5825,
+      "rows": 39,
       "cols": 10,
       "columns": {
         "h3_cell": {
@@ -482,13 +482,13 @@
       "format": "csv",
       "description": "One row per calendar day: sampled trip count, median speed, the dispersion-corrected z-scores and the flags. Days with too few sampled trips are marked 'not assessable' in `note`.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 24387,
-      "rows": 365,
+      "bytes": 1811,
+      "rows": 14,
       "cols": 12,
       "columns": {
         "date": {
@@ -557,12 +557,12 @@
       "format": "csv",
       "description": "Stage 6 metric table: six algorithms, each scored in the space it actually clustered, plus bootstrap stability.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 754,
+      "bytes": 757,
       "rows": 6,
       "cols": 14,
       "columns": {
@@ -642,12 +642,12 @@
       "format": "json",
       "description": "The same comparison with settings and notes, for programs.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 3855,
+      "bytes": 3832,
       "keys": [
         "stage",
         "data_source",
@@ -669,12 +669,12 @@
       "format": "json",
       "description": "Provenance for the interpretation stage: source, synthetic flag, naming rule, anomaly rules, random seed.",
       "provenance": {
-        "data_source": "porto_taxi_uci339",
+        "data_source": "delhi_gtfs_kaggle",
         "synthetic": false,
-        "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay"
+        "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts"
       },
       "exists": true,
-      "bytes": 1087,
+      "bytes": 1046,
       "keys": [
         "stage",
         "data_source",
@@ -706,7 +706,7 @@
         "note": "test fixture, not an input to any result in this directory"
       },
       "exists": true,
-      "bytes": 1927,
+      "bytes": 1998,
       "keys": [
         "stage",
         "data_source",
@@ -733,7 +733,7 @@
         "note": "earlier data attempt; retained as evidence of why the fallback was taken"
       },
       "exists": true,
-      "bytes": 5947,
+      "bytes": 6193,
       "keys": [
         "stage",
         "label",
@@ -756,33 +756,14 @@
     }
   },
   "figures": [
-    "stage1_stop_coverage.png",
-    "stage2_removed_points.png",
-    "stage2_speed_before_after.png",
-    "stage3_cell_activity.png",
-    "stage3_cyclic_encoding.png",
-    "stage3_scaling_effect.png",
-    "stage3_weekly_profile.png",
-    "stage4_correlation.png",
-    "stage4_loadings.png",
-    "stage4_pca_umap.png",
-    "stage4_scree.png",
-    "stage5_cluster_maps.png",
-    "stage5_dbscan_selection.png",
-    "stage5_dtw_profiles.png",
-    "stage5_gmm_bic.png",
-    "stage5_kmeans_selection.png",
-    "stage6_agreement.png",
-    "stage6_comparison.png",
-    "stage6_k_selection.png",
     "stage7_anomalies.png",
     "stage7_poi.png",
     "stage7_profiles.png"
   ],
   "checks": {
     "declared_files": 13,
-    "figures": 22,
+    "figures": 3,
     "passed": true,
-    "validated_utc": "2026-11-09T08:31:00+00:00"
+    "validated_utc": "2026-11-12T07:54:31+00:00"
   }
 }
