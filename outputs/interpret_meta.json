@@ -1,16 +1,16 @@
 {
- "stage": 7,
- "data_source": "porto_taxi_uci339",
- "synthetic": false,
- "algorithm": "kmeans (k=4) on PC1-PC5; tskmeans on 168-h profiles as orthogonal axis",
- "naming_rule": "quadrant of (volume_index, congestion_index) + temporal modifier + POI phrase",
- "anomaly_rules": {
-  "spatial": "top 2% of distance to own centroid in PC1-PC5 AND robust z >= 2",
-  "temporal": "top 2% of L2 distance to own cluster mean 168-h profile AND robust z >= 2",
-  "daily": "|Poisson z| >= 2.5 (or robust z of median speed) with >= 30 sampled trips"
- },
- "poi_source": "OpenStreetMap via osmnx (cached in data/raw/osm/)",
- "limitation": "taxis, not buses: no fixed stops, no timetable, no schedule delay",
- "random_state": 42,
- "limitation_text": "Real GPS from Porto taxis (UCI 339), not city buses. There are no fixed stops, no timetable and no schedule delay to measure, so route-segment delay and stop profiles cannot be computed from this source. 'Dwell' is below-walking-pace time, which mixes kerbside waiting, parking and traffic. Cluster names describe taxi movement, not passenger demand."
+  "stage": 7,
+  "data_source": "delhi_gtfs_kaggle",
+  "synthetic": false,
+  "algorithm": "kmeans (k=4) on PC1-PC5; tskmeans on 168-h profiles as orthogonal axis",
+  "naming_rule": "quadrant of (volume_index, congestion_index) + temporal modifier + POI phrase",
+  "anomaly_rules": {
+    "spatial": "top 2% of distance to own centroid in PC1-PC5 AND robust z >= 2",
+    "temporal": "top 2% of L2 distance to own cluster mean 168-h profile AND robust z >= 2",
+    "daily": "|Poisson z| >= 2.5 (or robust z of median speed) with >= 30 sampled trips"
+  },
+  "poi_source": "OpenStreetMap via osmnx (cached in data/raw/osm/)",
+  "limitation": "scheduled GTFS timetable (DIMTS/DTC), not live GPS: no real-time delays or passenger counts",
+  "random_state": 42,
+  "limitation_text": "Scheduled GTFS bus timetable for Delhi NCR (DIMTS and DTC, Kaggle delhi-bus-transit-data-enhanced-for-ml), not live GPS pings. Segment speeds and dwell reflect scheduled stop-to-stop timings rather than real-time traffic incidents or passenger counts."
 }

@@ -230,5 +230,28 @@ drift from the numbers). The short version:
   run: no model weights were downloaded and no public video was processed, so there are no
   footfall numbers in this repository and none are claimed. `requirements-optional.txt`
   lists the dependencies, unpinned on purpose (pinning untested versions would be a claim).
-* **The Streamlit dashboard.** Built separately; it reads `outputs/` only, using
-  `manifest.json` to check what it is reading.
+* **The Streamlit dashboard.** Lives in `dashboard/` and reads `outputs/` only, validating `outputs/manifest.json` on startup.
+
+---
+
+## 10. Running the Streamlit dashboard
+
+The dashboard reads **only** the precomputed artefacts in `outputs/` (and `docs/PRIVACY_AND_LIMITATIONS.md`) and never re-runs clustering.
+
+### Install and launch
+
+```bash
+pip install -r requirements.txt
+streamlit run dashboard/app.py
+```
+
+### Required `outputs/` dependency
+
+On startup, `dashboard/app.py` checks `outputs/manifest.json` and verifies that all 13 declared data/metadata files and their required columns are present (`cell_annotations.parquet`, `cluster_profiles.csv`, `cluster_pois.csv`, `cluster_hourly_profile.parquet`, `cluster_rhythm_names.csv`, `cluster_rhythm_crosstab.csv`, `anomalies.csv`, `day_anomalies.csv`, `cluster_comparison.csv`, `cluster_comparison.json`, `interpret_meta.json`, `cleaning_report.json`, and `data_audit.json`). Missing optional figures in `outputs/figures/` degrade gracefully.
+
+To validate the outputs contract and run the dashboard smoke tests:
+
+```bash
+python -m pytest tests/test_manifest_and_dashboard.py
+```
+

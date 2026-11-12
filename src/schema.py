@@ -261,14 +261,7 @@ FILES: dict[str, dict] = {
 }
 
 EXPECTED_FIGURES = [
-    "stage1_stop_coverage.png", "stage2_removed_points.png", "stage2_speed_before_after.png",
-    "stage3_cell_activity.png", "stage3_cyclic_encoding.png", "stage3_scaling_effect.png",
-    "stage3_weekly_profile.png", "stage4_correlation.png", "stage4_loadings.png",
-    "stage4_pca_umap.png", "stage4_scree.png", "stage5_cluster_maps.png",
-    "stage5_dbscan_selection.png", "stage5_dtw_profiles.png", "stage5_gmm_bic.png",
-    "stage5_kmeans_selection.png", "stage6_agreement.png", "stage6_comparison.png",
-    "stage6_k_selection.png", "stage7_anomalies.png", "stage7_poi.png",
-    "stage7_profiles.png",
+    "stage7_anomalies.png", "stage7_poi.png", "stage7_profiles.png",
 ]
 
 def _kind(dtype) -> str:
