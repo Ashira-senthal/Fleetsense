@@ -1,6 +1,6 @@
-"""Main page: interactive Porto H3 hexagon cluster map using pydeck."""
+"""Main page: interactive H3 hexagon cluster map."""
 
-from __future__ import annotations
+# from __future__ import annotations
 
 import math
 
@@ -11,7 +11,6 @@ from utils.load import (
     OUTPUTS_DIR,
     load_cell_annotations,
     load_cluster_profiles,
-    load_hourly_profile,
     load_rhythm_names,
 )
 from utils.theme import (
@@ -23,18 +22,9 @@ from utils.theme import (
     rhythm_rgb,
 )
 
-DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
-
-def _format_hour_of_week(how: int) -> str:
-    return f"{DAYS_OF_WEEK[how // 24]} {how % 24:02d}:00"
-
-
-cells = load_cell_annotations(OUTPUTS_DIR).copy()
-cells["cell_num"] = range(1, len(cells) + 1)
+cells = load_cell_annotations(OUTPUTS_DIR)
 profiles = load_cluster_profiles(OUTPUTS_DIR)
 rhythms = load_rhythm_names(OUTPUTS_DIR)
-hourly = load_hourly_profile(OUTPUTS_DIR)
 
 cluster_short = {int(r["cluster"]): str(r["label"]) for _, r in profiles.iterrows()}
 rhythm_labels = {
@@ -44,11 +34,9 @@ rhythm_labels = {
 
 with st.container(border=True):
     # Compact inline toolbar directly above the map
-    top_c1, top_c2, top_c3 = st.columns([1.8, 0.9, 0.9], vertical_alignment="bottom")
+    top_c1, top_c2 = st.columns([2.4, 0.4], vertical_alignment="bottom")
     with top_c1:
         colour_options = ["Behaviour cluster", "Rhythm cluster", "Anomaly score", "Visits"]
-        if st.session_state.get("map_use_how", False):
-            colour_options.append("Hour-of-week activity")
         colour_by = st.segmented_control(
             "Colour hexagons by",
             options=colour_options,
@@ -65,56 +53,6 @@ with st.container(border=True):
             value=False,
             key="map_anomalies_only",
         )
-
-    with top_c3:
-        with st.popover("Filters & search", icon=":material/search:", width="stretch"):
-            all_cell_ids = sorted(cells["h3_cell"].tolist())
-            current_highlight = st.session_state.get("selected_h3_cell")
-            default_idx = (
-                all_cell_ids.index(current_highlight)
-                if current_highlight in all_cell_ids
-                else None
-            )
-            searched_cell = st.selectbox(
-                "Search cell by H3 ID",
-                options=all_cell_ids,
-                index=default_idx,
-                placeholder="Select or type H3 ID...",
-                key="map_cell_search",
-            )
-            if searched_cell != current_highlight:
-                st.session_state["selected_h3_cell"] = searched_cell
-
-            selected_rhythms = st.multiselect(
-                "Weekly rhythm clusters",
-                options=sorted(rhythm_labels.keys()),
-                default=sorted(rhythm_labels.keys()),
-                format_func=lambda r: rhythm_labels[r],
-                key="map_filter_rhythms",
-            )
-            min_visits = st.slider(
-                "Minimum visits per cell",
-                min_value=int(cells["n_visits"].min()),
-                max_value=max(int(cells["n_visits"].quantile(0.95)), 10),
-                value=int(cells["n_visits"].min()),
-                key="map_min_visits",
-            )
-            use_how = st.toggle(
-                "Hour-of-week slider",
-                value=False,
-                help="Inspect cluster-level mean pings/cell/hour across the 168-hour week.",
-                key="map_use_how",
-            )
-            hour_of_week = st.slider(
-                "Hour of week (0 = Mon 00:00)",
-                min_value=0,
-                max_value=167,
-                value=9,
-                disabled=not use_how,
-                key="map_hour_of_week",
-            )
-            if use_how:
-                st.caption(f"Slot: **{_format_hour_of_week(hour_of_week)}**")
 
     cluster_ids_sorted = sorted(cluster_short.keys())
     pill_css_rules = [
@@ -150,27 +88,16 @@ with st.container(border=True):
     )
 
 # Apply filters
-filtered = cells[
-    cells["cluster"].isin(selected_clusters)
-    & cells["rhythm_cluster"].isin(selected_rhythms)
-    & (cells["n_visits"] >= min_visits)
-].copy()
+filtered = cells[cells["cluster"].isin(selected_clusters)].copy()
 
 if anomalies_only:
     filtered = filtered[filtered["is_anomaly"]].copy()
 
-hour_activity_map = hourly[hour_of_week].to_dict() if hour_of_week in hourly.columns else {}
-filtered["cluster_hour_pings"] = (
-    filtered["cluster"].map(hour_activity_map).fillna(0.0).round(2)
-)
 filtered["slow_pct"] = (filtered["slow_share"] * 100).round(1)
 filtered["speed_mean_r"] = filtered["speed_mean"].round(1)
 filtered["anomaly_score_r"] = filtered["anomaly_score"].round(2)
 filtered["dwell_r"] = filtered["cluster_dwell_s_per_visit"].round(0)
 filtered["poi_r"] = filtered["cluster_poi_per_cell"].round(1)
-filtered["drivers_display"] = filtered["drivers"].where(
-    filtered["is_anomaly"], "— (not flagged)"
-)
 
 highlight_id = st.session_state.get("selected_h3_cell")
 
@@ -187,14 +114,10 @@ else:
         filtered["fill_color"] = [
             continuous_rgb(v, vmin, vmax, alpha=215) for v in filtered["anomaly_score"]
         ]
-    elif colour_by == "Visits":
+    else:
         log_v = [math.log1p(v) for v in filtered["n_visits"]]
         vmin, vmax = min(log_v), max(log_v)
         filtered["fill_color"] = [continuous_rgb(v, vmin, vmax, alpha=215) for v in log_v]
-    else:
-        vals = filtered["cluster_hour_pings"].tolist()
-        vmin, vmax = min(vals), max(vals)
-        filtered["fill_color"] = [continuous_rgb(v, vmin, vmax, alpha=215) for v in vals]
 
     if highlight_id and highlight_id in set(filtered["h3_cell"]):
         focus_row = filtered[filtered["h3_cell"] == highlight_id].iloc[0]
@@ -208,7 +131,6 @@ else:
 
     def _row_to_payload(row) -> dict:
         return {
-            "cell_num": int(row["cell_num"]),
             "h3_cell": str(row["h3_cell"]),
             "cluster_name": str(row["cluster_name"]),
             "rhythm_label": f"R{int(row['rhythm_cluster'])} · {row['rhythm_name']}",
@@ -219,9 +141,6 @@ else:
             "dwell_r": float(row["cluster_dwell_s_per_visit"]),
             "poi_r": float(row["cluster_poi_per_cell"]),
             "anomaly_type": str(row["anomaly_type"]),
-            "is_anomaly": bool(row["is_anomaly"]),
-            "drivers": str(row["drivers"]),
-            "cluster_hour_pings": float(row["cluster_hour_pings"]),
             "fill_color": row["fill_color"],
         }
 
@@ -241,8 +160,6 @@ else:
         view_lon=view_lon,
         view_zoom=view_zoom,
         is_dark=is_dark_theme(),
-        use_how=use_how,
-        how_label=_format_hour_of_week(hour_of_week),
         key="fleetsense_hover_map",
         on_selected_h3_cell_change=_sync_selected_cell,
     )
@@ -302,4 +219,3 @@ with legend_col:
                 icon=":material/download:",
                 width="stretch",
             )
-

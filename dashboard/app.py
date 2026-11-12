@@ -8,12 +8,18 @@ from __future__ import annotations
 
 import streamlit as st
 
-from utils.load import OUTPUTS_DIR, get_overview_kpis, load_manifest, validate_manifest
+from utils.load import (
+    OUTPUTS_DIR,
+    get_overview_kpis,
+    load_cluster_profiles,
+    load_json_output,
+    validate_manifest,
+)
 from utils.theme import render_jargon_popover
 
 st.set_page_config(
-    page_title="FleetSense: Delhi bus mobility patterns",
-    page_icon=":material/directions_bus:",
+    page_title="FleetSense: Delhi taxi mobility patterns",
+    page_icon=":material/local_taxi:",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -30,39 +36,33 @@ if not validation.passed:
     st.stop()
 
 # Shared cross-page session state.
-st.session_state.setdefault("selected_h3_cell", None)
+# st.session_state.setdefault("selected_h3_cell", None)
 
 pages = [
     st.Page("pages/2_cluster_map.py", title="Map", icon=":material/map:", default=True),
     st.Page("pages/3_cluster_profiles.py", title="Clusters", icon=":material/analytics:"),
     st.Page("pages/4_weekly_rhythms.py", title="Weekly rhythm", icon=":material/schedule:"),
     st.Page("pages/5_anomalies.py", title="Anomalies", icon=":material/warning:"),
-    st.Page("pages/6_model_comparison.py", title="Method", icon=":material/compare:"),
-    st.Page("pages/7_data_quality.py", title="Data quality", icon=":material/verified_user:"),
-    st.Page("pages/1_overview.py", title="Overview", icon=":material/dashboard:"),
+    # st.Page("pages/6_model_comparison.py", title="Method", icon=":material/compare:"),
+    # st.Page("pages/7_data_quality.py", title="Data quality", icon=":material/verified_user:"),
 ]
 
 page = st.navigation(pages, position="top")
 
-# Compact global header + KPI strip matching the FleetSense hero layout.
-manifest = load_manifest(OUTPUTS_DIR)
+# Compact global header + KPI strip.
 kpis = get_overview_kpis(OUTPUTS_DIR)
-checks = manifest.get("checks", {})
+meta = load_json_output("interpret_meta.json", OUTPUTS_DIR)
+profiles = load_cluster_profiles(OUTPUTS_DIR)
 
 head_left, head_right = st.columns([3.5, 1], vertical_alignment="center")
 with head_left:
     st.title("FleetSense: Delhi bus mobility patterns")
     st.caption(
-        "Which parts of Delhi NCR behave alike, and when? Bus schedules (DIMTS & DTC) "
-        "grouped into H3 hexagons and clustered without labels."
+        "Which parts of Delhi behave alike, and when? Bus GPS pings grouped into "
+        "H3 hexagons and clustered without labels."
     )
 with head_right:
     with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="center"):
-        st.badge(
-            f"Manifest OK ({checks.get('declared_files', 0)} files)",
-            icon=":material/check_circle:",
-            color="green",
-        )
         render_jargon_popover()
 
 kpi_cols = st.columns(6)
@@ -82,5 +82,23 @@ kpi_cols[3].metric(
 )
 kpi_cols[4].metric("flagged cells", f"{kpis['flagged_cells']:,}", border=True, height="stretch")
 kpi_cols[5].metric("flagged days", f"{kpis['flagged_days']:,}", border=True, height="stretch")
+
+example_label = str(profiles.iloc[min(1, len(profiles) - 1)]["label"]) if not profiles.empty else "Cluster 1"
+with st.expander("How to read this dashboard"):
+    st.markdown(
+        f"""
+        1. **Two independent axes:** Every analysed H3 hexagon (~0.74 km²) receives a
+           **behaviour cluster** (`K-Means, k={kpis['behaviour_clusters']}` on speed, dwell,
+           stop-and-go CV, and volume) and a **weekly rhythm cluster** (`TS-K-Means, k={kpis['rhythm_clusters']}`
+           on 168-hour activity profiles). Keeping them separate lets you see when the same
+           traffic behaviour occurs at different times of week.
+        2. **Names are hypotheses, not facts:** Labels like *"{example_label}"* are
+           generated from measured z-scores and OpenStreetMap POI ratios. Always read the
+           measured numbers alongside each name.
+        3. **Anomalies are candidates, not proven incidents:** Cell and day flags come from
+           explicit statistical rules (`{meta.get('anomaly_rules', {}).get('spatial', '')}`).
+        4. **Taxis, not buses:** {meta.get('limitation_text', '')}
+        """
+    )
 
 page.run()

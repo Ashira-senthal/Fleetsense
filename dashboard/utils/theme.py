@@ -6,10 +6,10 @@ import streamlit as st
 
 # Colourblind-safe IBM / Okabe-Ito inspired palette for the 4 behaviour clusters.
 BEHAVIOUR_HEX: dict[int, str] = {
-    0: "#648FFF",  # Blue — Slow low-traffic pockets (weekend-heavy)
-    1: "#FE6100",  # Orange — Busy mid-speed corridors (all-day, hospitality-dense)
-    2: "#DC267F",  # Magenta — Severe stop-and-go pockets (all-day)
-    3: "#009E73",  # Bluish-green — Quiet free-flowing fringe (weekend-heavy)
+    0: "#648FFF",  # Blue — Cluster 0
+    1: "#FE6100",  # Orange — Cluster 1
+    2: "#DC267F",  # Magenta — Cluster 2
+    3: "#009E73",  # Bluish-green — Cluster 3
 }
 
 # Distinct colourblind-safe palette for the 4 TS-K-Means weekly rhythm clusters.
@@ -23,9 +23,8 @@ RHYTHM_HEX: dict[int, str] = {
 FALLBACK_HEX = "#6E7781"
 
 TAXI_CAVEAT = (
-    "**Scheduled GTFS, not live GPS:** these are Delhi NCR bus schedules "
-    "(DIMTS / DTC). Speeds and dwell reflect scheduled stop-to-stop timings, "
-    "not real-time traffic delays or passenger counts."
+    "**Taxi GPS trajectories, not buses:** no fixed stops, timetable or passenger counts. "
+    "\"Dwell\" means below walking pace (kerbside waiting, parking, traffic)."
 )
 
 
@@ -98,11 +97,11 @@ def render_taxi_caveat(compact: bool = False) -> None:
     """Render the mandatory data-limitation notice."""
     if compact:
         st.caption(
-            ":material/directions_bus: **Scheduled GTFS, not live GPS:** no real-time delays "
+            ":material/local_taxi: **Taxi GPS, not buses:** no fixed stops, timetable "
             "or passenger counts. Cluster names are hypotheses, not ground truth."
         )
     else:
-        st.warning(TAXI_CAVEAT, icon=":material/directions_bus:")
+        st.warning(TAXI_CAVEAT, icon=":material/local_taxi:")
 
 
 def render_jargon_popover() -> None:

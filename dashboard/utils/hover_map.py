@@ -138,23 +138,6 @@ _CSS = """
   word-break: break-word;
 }
 
-.fs-drivers-box {
-  margin-top: 0.75rem;
-  padding: 0.65rem 0.8rem;
-  border-radius: var(--st-base-radius, 0.5rem);
-  background: rgba(234, 179, 8, 0.14);
-  border: 1px solid rgba(234, 179, 8, 0.35);
-  font-size: 0.83rem;
-  line-height: 1.4;
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
-}
-
-.fs-drivers-icon {
-  flex-shrink: 0;
-}
-
 .fs-clear-btn {
   margin-top: 0.75rem;
   width: 100%;
@@ -258,7 +241,7 @@ export default function (component) {
 
   const renderDetailCard = (cell, mode) => {
     if (!cell) return;
-    cellIdEl.textContent = cell.cell_num != null ? `#${cell.cell_num}` : (cell.h3_cell || "");
+    cellIdEl.textContent = cell.h3_cell || "";
 
     if (mode === "hover") {
       statusEl.textContent = state.pinnedId
@@ -282,12 +265,6 @@ export default function (component) {
       ["POIs per cell (cluster)", `${Number(cell.poi_r).toFixed(1)}`],
       ["Flag", cell.anomaly_type],
     ];
-    if (state.latestData.use_how) {
-      rows.push([
-        `Activity (${state.latestData.how_label})`,
-        `${Number(cell.cluster_hour_pings).toFixed(1)} pings/cell/h`,
-      ]);
-    }
 
     kvBodyEl.innerHTML = rows
       .map(
@@ -427,8 +404,6 @@ def render_hover_map(
     view_lon: float,
     view_zoom: float,
     is_dark: bool,
-    use_how: bool,
-    how_label: str,
     key: str = "fleetsense_hover_map",
     on_selected_h3_cell_change: Callable[[], None] | None = None,
 ):
@@ -445,8 +420,6 @@ def render_hover_map(
             "view_lon": view_lon,
             "view_zoom": view_zoom,
             "is_dark": is_dark,
-            "use_how": use_how,
-            "how_label": how_label,
         },
         key=key,
         width="stretch",
