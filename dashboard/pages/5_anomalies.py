@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
@@ -29,28 +28,8 @@ render_taxi_caveat(compact=True)
 
 # --- Part 1: Flagged cells ---
 st.subheader("Flagged H3 cells")
-f1, f2 = st.columns([1.2, 1.8], vertical_alignment="bottom")
-with f1:
-    selected_types = st.pills(
-        "Anomaly type",
-        options=["behaviour", "rhythm", "both"],
-        default=["behaviour", "rhythm", "both"],
-        selection_mode="multi",
-        key="anom_type_filter",
-    )
-with f2:
-    cluster_opts = sorted(anom["cluster"].unique().tolist())
-    selected_clusters = st.multiselect(
-        "Filter by behaviour cluster",
-        options=cluster_opts,
-        default=cluster_opts,
-        format_func=lambda c: f"Cluster {c}",
-        key="anom_cluster_filter",
-    )
 
-filtered_anom = anom[
-    anom["anomaly_type"].isin(selected_types) & anom["cluster"].isin(selected_clusters)
-].reset_index(drop=True)
+filtered_anom = anom.reset_index(drop=True)
 
 display_cols = [
     "h3_cell",
@@ -80,7 +59,7 @@ event = st.dataframe(
     on_select="rerun",
     selection_mode="single-row",
     key="anom_table",
-    alt="Sortable and filterable table of flagged anomalous H3 cells",
+    alt="Sortable table of flagged anomalous H3 cells",
 )
 
 selected_rows = event.selection.rows if hasattr(event, "selection") else []
@@ -94,7 +73,7 @@ if selected_rows:
             st.switch_page("pages/2_cluster_map.py")
 
 st.download_button(
-    "Download filtered cell anomalies (CSV)",
+    "Download flagged cell anomalies (CSV)",
     data=filtered_anom.to_csv(index=False).encode("utf-8"),
     file_name="fleetsense_cell_anomalies.csv",
     mime="text/csv",
@@ -179,7 +158,7 @@ fig_days.update_layout(
 )
 st.plotly_chart(
     fig_days,
-    alt="Time series of daily z-scores with flagged anomalies and Portuguese holidays annotated",
+    alt="Time series of daily z-scores with flagged anomalies and holidays annotated",
 )
 
 show_only_flagged_days = st.toggle("Show flagged days only", value=True, key="day_anom_only")
@@ -212,12 +191,3 @@ st.dataframe(
     hide_index=True,
     alt="Table of daily volume and speed anomaly checks",
 )
-
-st.download_button(
-    "Download day anomalies (CSV)",
-    data=day_table.drop(columns=["date_dt"]).to_csv(index=False).encode("utf-8"),
-    file_name="fleetsense_day_anomalies.csv",
-    mime="text/csv",
-    icon=":material/download:",
-)
-

@@ -1,97 +1,78 @@
-"""Model comparison page: six-algorithm evaluation and pipeline figure gallery."""
+"""Model comparison page: six-algorithm evaluation and key figures."""
 
 from __future__ import annotations
 
-import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
 from utils.load import (
+    FIGURES_DIR,
     OUTPUTS_DIR,
-    list_figures,
+    get_overview_kpis,
     load_cluster_comparison,
-    load_json_output,
-    load_manifest,
+    load_cluster_profiles,
+    load_rhythm_names,
 )
 from utils.theme import plotly_template, render_jargon_popover
 
 comp = load_cluster_comparison(OUTPUTS_DIR)
-comp_meta = load_json_output("cluster_comparison.json", OUTPUTS_DIR)
-manifest = load_manifest(OUTPUTS_DIR)
-figures = list_figures(OUTPUTS_DIR, manifest)
+kpis = get_overview_kpis(OUTPUTS_DIR)
+n_cells = kpis["cells_analysed"]
 
-FIGURE_CAPTIONS: dict[str, str] = {
-    "stage1_stop_coverage.png": "Stage 1: Spatial extent of the initial Delhi OTD trimmed GTFS audit (retained for auditability).",
-    "stage2_removed_points.png": "Stage 2: GPS points removed by cleaning rules on the synthetic test fixture.",
-    "stage2_speed_before_after.png": "Stage 2: Speed distribution before vs after the 100 km/h jump filter.",
-    "stage3_cell_activity.png": "Stage 3: H3 resolution-8 cell visit distribution and ≥5-visit support threshold.",
-    "stage3_cyclic_encoding.png": "Stage 3: Sine/cosine cyclic encoding of hour-of-week and day-of-week.",
-    "stage3_scaling_effect.png": "Stage 3: Feature scaling effect prior to PCA.",
-    "stage3_weekly_profile.png": "Stage 3: Aggregate 168-hour weekly activity curve.",
-    "stage4_correlation.png": "Stage 4: Feature correlation matrix across cell-level mobility metrics.",
-    "stage4_loadings.png": "Stage 4: Principal component loadings (PC1–PC5).",
-    "stage4_pca_umap.png": "Stage 4: PCA and UMAP 2D projections (UMAP used for visualisation only).",
-    "stage4_scree.png": "Stage 4: PCA explained variance scree plot.",
-    "stage5_cluster_maps.png": "Stage 5: Spatial comparison of candidate clustering algorithms.",
-    "stage5_dbscan_selection.png": "Stage 5: Spatial DBSCAN epsilon / min_samples selection.",
-    "stage5_dtw_profiles.png": "Stage 5: TS-K-Means DTW 168-hour rhythm prototypes.",
-    "stage5_gmm_bic.png": "Stage 5: Gaussian Mixture Model BIC curve across k.",
-    "stage5_kmeans_selection.png": "Stage 5: K-Means elbow (inertia) and silhouette across k.",
-    "stage6_agreement.png": "Stage 6: Cross-algorithm agreement (Adjusted Rand Index matrix).",
-    "stage6_comparison.png": "Stage 6: Internal validity and bootstrap stability across all six algorithms.",
-    "stage6_k_selection.png": "Stage 6: Final k=4 justification across inertia, BIC, and silhouette.",
-    "stage7_anomalies.png": "Stage 7: Flagged spatial/temporal anomaly cells and robust-z distributions.",
-    "stage7_poi.png": "Stage 7: OpenStreetMap POI density per H3 cell by cluster (bus stops excluded).",
-    "stage7_profiles.png": "Stage 7: Cluster feature z-scores and 168-hour activity curves.",
-}
+km_rows = comp[comp["algorithm"] == "kmeans"]
+ts_rows = comp[comp["algorithm"] == "tskmeans"]
+hd_rows = comp[comp["algorithm"] == "hdbscan"]
+
+k_beh = int(km_rows.iloc[0]["n_clusters"]) if not km_rows.empty else len(load_cluster_profiles(OUTPUTS_DIR))
+k_rhy = int(ts_rows.iloc[0]["n_clusters"]) if not ts_rows.empty else len(load_rhythm_names(OUTPUTS_DIR))
 
 with st.container(horizontal=True, vertical_alignment="center"):
     st.markdown(
-        "**Chosen model:** `kmeans` (k = 4 on PC1–PC5) · "
-        "**Temporal axis:** `tskmeans` (k = 4 on 168-h profiles)"
+        f"**Chosen model:** `kmeans` (k={k_beh} on PC1–PC5) · "
+        f"**Temporal axis:** `tskmeans` (k={k_rhy} on 168-h profiles)"
     )
     render_jargon_popover()
 
-st.success(
-    "**Why K-Means was chosen:** K-Means achieved the highest bootstrap stability "
-    "(**ARI = 0.851 ± 0.052**, worst resample 0.758), covered **100%** of the 602 analysed cells, "
-    "and led on Davies–Bouldin (**1.435**, lower is better) and Calinski–Harabasz (**182.19**). "
-    "HDBSCAN reported a higher silhouette (**0.333** vs 0.244) only by discarding **60.3%** of cells "
-    "as noise (39.7% coverage).",
-    icon=":material/check_circle:",
-)
+if not km_rows.empty:
+    km = km_rows.iloc[0]
+    why_parts = [
+        f"**Why K-Means was chosen:** K-Means achieved strong bootstrap stability "
+        f"(**ARI = {km['ari_mean']:.3f} ± {km['ari_sd']:.3f}**, worst resample {km['ari_min']:.3f}), "
+        f"covered **{km['coverage']:.0%}** of the {n_cells:,} analysed cells, "
+        f"with Davies–Bouldin **{km['davies_bouldin']:.3f}** (lower is better) "
+        f"and Calinski–Harabasz **{km['calinski_harabasz']:.2f}**."
+    ]
+    if not hd_rows.empty:
+        hd = hd_rows.iloc[0]
+        discarded = 1.0 - float(hd["coverage"])
+        why_parts.append(
+            f" HDBSCAN reported a higher silhouette (**{hd['silhouette']:.3f}** vs {km['silhouette']:.3f}) "
+            f"only by discarding **{discarded:.1%}** of cells as noise ({hd['coverage']:.1%} coverage)."
+        )
+    st.success("".join(why_parts), icon=":material/check_circle:")
 
 st.subheader("Six-algorithm evaluation metrics")
 
 display_comp = comp.copy()
 display_comp["selected"] = display_comp["algorithm"].eq("kmeans")
 
-
-def _highlight_kmeans(row: pd.Series) -> list[str]:
-    if row["algorithm"] == "kmeans":
-        return ["font-weight: 700; background-color: rgba(100, 143, 255, 0.16)"] * len(row)
-    return [""] * len(row)
-
-
-styled_comp = display_comp[
-    [
-        "selected",
-        "algorithm",
-        "space",
-        "n_clusters",
-        "coverage",
-        "silhouette",
-        "silhouette_pca_space",
-        "davies_bouldin",
-        "calinski_harabasz",
-        "dbcv",
-        "ari_mean",
-        "ari_sd",
-    ]
-].style.apply(_highlight_kmeans, axis=1)
-
 st.dataframe(
-    styled_comp,
+    display_comp[
+        [
+            "selected",
+            "algorithm",
+            "space",
+            "n_clusters",
+            "coverage",
+            "silhouette",
+            "silhouette_pca_space",
+            "davies_bouldin",
+            "calinski_harabasz",
+            "dbcv",
+            "ari_mean",
+            "ari_sd",
+        ]
+    ],
     column_config={
         "selected": st.column_config.CheckboxColumn("Chosen"),
         "algorithm": st.column_config.TextColumn("Algorithm"),
@@ -140,45 +121,16 @@ st.plotly_chart(
     alt="Bar chart comparing bootstrap ARI stability and coverage across the six algorithms",
 )
 
-with st.expander("Metric notes from cluster_comparison.json"):
-    for k, v in comp_meta.get("notes", {}).items():
-        st.markdown(f"- **{k}:** {v}")
-
-st.download_button(
-    "Download model comparison table (CSV)",
-    data=comp.to_csv(index=False).encode("utf-8"),
-    file_name="cluster_comparison.csv",
-    mime="text/csv",
-    icon=":material/download:",
-)
-
-# Pipeline figure gallery
-st.divider()
-st.subheader("Pipeline figures gallery")
-
-if not figures:
-    st.info("No PNG figures were found in `outputs/figures/`.", icon=":material/image:")
-else:
-    stages = sorted({p.name.split("_")[0] for p in figures})
-    selected_stages = st.pills(
-        "Filter by pipeline stage",
-        options=stages,
-        default=stages,
-        selection_mode="multi",
-        key="gallery_stage_filter",
-    )
-    visible_figs = [p for p in figures if p.name.split("_")[0] in selected_stages]
-    st.caption(f"Showing {len(visible_figs)} of {len(figures)} figures from `outputs/figures/`.")
-
-    for i in range(0, len(visible_figs), 2):
-        cols = st.columns(2)
-        for col, fig_path in zip(cols, visible_figs[i : i + 2]):
-            caption = FIGURE_CAPTIONS.get(fig_path.name, fig_path.name.replace("_", " "))
-            with col.container(border=True):
-                st.image(
-                    str(fig_path),
-                    caption=f"{fig_path.name} — {caption}",
-                    alt=caption,
-                    width="stretch",
-                )
-
+# Key figures (at most two, if present on disk)
+key_figures = [
+    ("stage6_comparison.png", "Internal validity and bootstrap stability across the six algorithms."),
+    ("stage4_pca_umap.png", "PCA and UMAP 2D projections (UMAP used for visualisation only)."),
+]
+existing_figs = [(FIGURES_DIR / fname, cap) for fname, cap in key_figures if (FIGURES_DIR / fname).exists()]
+if existing_figs:
+    st.divider()
+    st.subheader("Key figures")
+    cols = st.columns(len(existing_figs))
+    for col, (fig_path, caption) in zip(cols, existing_figs):
+        with col.container(border=True):
+            st.image(str(fig_path), caption=caption, alt=caption, width="stretch")

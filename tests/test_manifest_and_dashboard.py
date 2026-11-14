@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DASHBOARD_DIR = REPO_ROOT / "dashboard"
@@ -121,4 +120,30 @@ def test_streamlit_pages_render_without_exceptions() -> None:
         pt.run()
         assert not pt.exception, f"Exception in {page_file.name}: {pt.exception}"
         assert not pt.error, f"Error in {page_file.name}: {pt.error}"
+
+
+def test_no_delhi_gtfs_labels_outside_data_quality_note() -> None:
+    """Ensure Delhi/GTFS strings only appear in the single allowed Data quality note."""
+    forbidden = ("Delhi bus", "DIMTS", "DTC", "GTFS")
+    allowed_file = (DASHBOARD_DIR / "pages" / "7_data_quality.py").resolve()
+    violations: list[str] = []
+
+    for py_file in sorted(DASHBOARD_DIR.rglob("*.py")):
+        text = py_file.read_text(encoding="utf-8")
+        if py_file.resolve() == allowed_file:
+            matching_lines = [
+                line for line in text.splitlines() if any(tok in line for tok in forbidden)
+            ]
+            if len(matching_lines) > 1:
+                violations.append(
+                    f"{py_file.name}: expected at most 1 allowed note line, found {len(matching_lines)}"
+                )
+        else:
+            for lineno, line in enumerate(text.splitlines(), start=1):
+                for tok in forbidden:
+                    if tok in line:
+                        violations.append(f"{py_file.relative_to(DASHBOARD_DIR)}:{lineno}: {tok}")
+
+    assert not violations, "Unexpected Delhi/GTFS references:\n" + "\n".join(violations)
+
 

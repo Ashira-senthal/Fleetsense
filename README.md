@@ -238,6 +238,8 @@ drift from the numbers). The short version:
 
 The dashboard reads **only** the precomputed artefacts in `outputs/` (and `docs/PRIVACY_AND_LIMITATIONS.md`) and never re-runs clustering.
 
+Pages: **Map** (default), **Clusters**, **Weekly rhythm**, **Anomalies**, **Method**, and **Data quality**.
+
 ### Install and launch
 
 ```bash
