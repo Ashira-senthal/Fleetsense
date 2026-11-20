@@ -1,60 +1,40 @@
 # Data sources and provenance
+---
 
-Everything in `data/raw/` is an input. Nothing here is committed to git (see `.gitignore`);
-this file is the record of where each input came from, when, and under what terms.
-
-## 1. Delhi bus GTFS static — `data/raw/delhi_gtfs_trimmed/`
+## 1. Delhi Bus Transit Data (Enhanced for ML) — `data/raw/delhi_kaggle/` (ACTIVE)
 
 | Field | Value |
 |---|---|
-| Dataset | Delhi Open Transit Data (OTD) — bus GTFS static (DIMTS / DTC) |
-| Publisher | Transport Department, Govt. of NCT of Delhi, via `https://otd.delhi.gov.in` |
-| Official download | `https://otd.delhi.gov.in/data/static/` — a **POST form** requiring name, e-mail and acceptance of the OTD terms. Not submitted on the student's behalf. |
-| Mirror linked from the OTD docs | `http://traffickarma.iiitd.edu.in:9010/static/*.txt` — **unreachable** (connection refused) when checked on 2026-11-09. |
-| Copy actually used for Stage 1 | Public trimmed copy of the same OTD data, committed in the repo `Anusharana510/CommuteLive` under `data/otd_gtfs/`, fetched 2026-11-09 from `https://raw.githubusercontent.com/Anusharana510/CommuteLive/main/data/otd_gtfs/` |
-| `synthetic` | **False** — this is measured/authoritative Delhi route, stop and stop-sequence data |
-| Trimmed | **Yes** — one representative trip per route; `stop_times` has no `arrival_time` / `departure_time`; no `shapes.txt` |
-| Licence | Not stated on the OTD documentation page read on 2026-11-09. **Confirm the OTD terms before publishing anything derived from it.** |
+| **Dataset** | Delhi Bus Transit Data (Enhanced for ML) |
+| **Publisher / Creator** | Adarsh Dubey |
+| **Download Source** | [Kaggle (`delhi-bus-transit-data-enhanced-for-ml`)](https://www.kaggle.com/datasets/adarshdubey001/delhi-bus-transit-data-enhanced-for-ml) |
+| **Raw File** | `data/raw/delhi_kaggle/full_bus_schedule.csv` (~800 MB) |
+| **Transit Agencies** | Delhi Integrated Multi-Modal Transit System (DIMTS) and Delhi Transport Corporation (DTC) |
+| **Geographic Scope** | National Capital Region (NCR), Delhi, India |
+| **Content** | Scheduled stop-to-stop bus timetable sequences, coordinates (`latitude`, `longitude`), arrival/departure timestamps, trip IDs, route IDs, and vehicle schedules across Delhi NCR routes |
+| **`synthetic`** | **False** — authoritative public transit schedule and route network data |
+| **Sample Used** | Systematic deterministic sample of **30,000 trips** (`random_state=42`) |
+| **Processed Pings** | **1,202,552 trajectory points** after physical jump and bounding-box cleaning |
+| **Spatial Aggregation** | Uber H3 resolution-8 hexagonal grid (~0.74 km² per cell, ~460 m edge); **1,155 cells** analysed (with ≥ 5 trip visits) |
+| **Key Limitation** | **Scheduled GTFS bus timetable, not live GPS:** Speeds and dwell times reflect scheduled stop-to-stop transit timings rather than real-time traffic jams or on-board passenger counts. Clusters describe transit service patterns and corridor intensity. |
 
-**Action for the student:** download the full official zip via the OTD form, save it as
-`data/raw/delhi_gtfs.zip`, then run
+---
 
-```bash
-python -c "from src.io import load_gtfs; f=load_gtfs('data/raw/delhi_gtfs.zip'); print({k: len(v) for k,v in f.items()})"
-python -m src.audit --feed data/raw/delhi_gtfs.zip --label "Delhi OTD (full official feed)"
-```
-
-The pipeline code does not change; only the `--feed` path does.
-
-## 2. Real-time bus GPS (pending)
-
-GTFS-Realtime `VehiclePositions.pb` behind a private key from OTD (`/api/realtime/VehiclePositions.pb?key=...`).
-Requires the student's own registration/approval. Until it exists, any GPS point table produced by this
-project is **synthetic** and is labelled as such in the file name, the parquet metadata and every plot.
-
-## 3. Porto taxi trajectories — `data/raw/porto/` (ACTIVE from Stage 3)
+## 2. OpenStreetMap Contextual POIs — `data/raw/osm/` (ACTIVE)
 
 | Field | Value |
 |---|---|
-| Dataset | Taxi Service Trajectory — Prediction Challenge, ECML PKDD 2015 (UCI id 339) |
-| Downloaded | `https://archive.ics.uci.edu/static/public/339/taxi+service+trajectory+prediction+challenge+ecml+pkdd+2015.zip` on 2026-11-09 (534 MB). The outer zip contains `train.csv.zip`, which contains `train.csv`; the loader handles the nesting. |
-| Licence | **CC BY 4.0** (as stated on the UCI dataset page) — attribution required |
-| Content | 442 Porto taxis, 2013-07-01 .. 2014-06-30, one `[lon, lat]` ping every 15 s per trip |
-| Used here | deterministic seeded sample: 60,000 rows sampled from 1,710,670 scanned → 58,706 parseable trips → 2,927,093 points |
-| `synthetic` | **False** — measured GPS |
-| **Limitation** | **Taxis, not buses.** No fixed stops, no timetable, no schedule delay. Dwell = below walking pace (kerbside waiting / traffic), not boarding. Demand peaks reflect taxi users, not bus passengers. |
+| **Dataset** | OpenStreetMap (OSM) Points of Interest (POIs) |
+| **Provider** | OpenStreetMap contributors via `osmnx` / Overpass API |
+| **Local Cache** | `data/raw/osm/delhi_osm_pois.parquet` |
+| **Licence** | Open Database License (ODbL) — attribution required |
+| **Usage** | Spatial join of amenities (education, sustenance, healthcare, commercial, civic institutions) within each H3 hexagon to characterize urban land use per cluster and assist in automated cluster naming. |
 
-This replaced the Delhi feed at Stage 3 because the OTD static zip could not be obtained: the portal pages
-answer (HTTP 200) but the file host they link to (`traffickarma.iiitd.edu.in:9010`) refuses connections, and the
-download itself is a POST form requiring the user's name, e-mail and terms acceptance.
+---
 
-## 4. Synthetic test fixture (Stage 2 only)
+## 3. Reference & Audit Artefacts (Historical Context)
 
-`data/interim/points_synthetic_raw.parquet` — generated by `src/synthetic.py` from Delhi stop coordinates with
-invented timestamps and injected defects. `data_source = "synthetic_test_fixture"`. Unit-test material for the
-cleaning rules; never used for analysis or reported as a mobility finding.
-
-## 4. OpenStreetMap (Stage 7, not yet downloaded)
-
-Used to *explain* clusters (schools, markets, stations within a radius) and optionally to snap GPS points
-to roads. Fetched with `osmnx`; ODbL licence, attribution required.
+* **Synthetic GPS Cleaning Fixture (`src/synthetic.py`):**
+  * Used as a labelled regression unit test to validate recall of GPS jump filters, deduplication, and out-of-bounds cleaning rules (`outputs/cleaning_report.json`).
+* **Initial Delhi OTD Static GTFS Trimmed Audit:**
+  * Preserved in `outputs/data_audit.json` to record the initial schema audit of public Delhi static transit GTFS feeds.
